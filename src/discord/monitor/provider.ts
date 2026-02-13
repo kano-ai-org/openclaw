@@ -37,7 +37,7 @@ import { danger, logVerbose, shouldLogVerbose, warn } from "../../globals.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { createDiscordRetryRunner } from "../../infra/retry-policy.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
-import { createNonExitingRuntime, type RuntimeEnv } from "../../runtime.js";
+import { getPluginCommandSpecs } from "../../plugins/commands.js";
 import { resolveDiscordAccount } from "../accounts.js";
 import { fetchDiscordApplicationId } from "../probe.js";
 import { normalizeDiscordToken } from "../token.js";
@@ -325,6 +325,29 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
         `discord: ${initialCommandCount} commands exceeds limit; removing per-skill commands and keeping /skill.`,
       ),
     );
+  }
+  if (nativeEnabled) {
+    const existingNames = new Set(commandSpecs.map((spec) => spec.name.toLowerCase()));
+    for (const pluginSpec of getPluginCommandSpecs()) {
+      const normalized = pluginSpec.name.trim().toLowerCase();
+      if (!normalized) {
+        continue;
+      }
+      if (existingNames.has(normalized)) {
+        runtime.log?.(
+          warn(
+            `discord: skipping plugin command /${normalized} because it conflicts with an existing command.`,
+          ),
+        );
+        continue;
+      }
+      commandSpecs.push({
+        name: normalized,
+        description: pluginSpec.description,
+        acceptsArgs: false,
+      });
+      existingNames.add(normalized);
+    }
   }
   if (nativeEnabled && commandSpecs.length > maxDiscordCommands) {
     runtime.log?.(
