@@ -85,6 +85,25 @@ export function registerCronSimpleCommands(cron: Command) {
 
   addGatewayClientOptions(
     cron
+      .command("heartbeat")
+      .description(
+        "Trigger the heartbeat runner now (for main agent, or specific agent via --agent)",
+      )
+      .option("--agent <id>", "Agent id (default: main)", "main")
+      .action(async (opts) => {
+        try {
+          const res = await callGatewayFromCli("cron.runHeartbeatOnce", opts, {
+            agentId: opts.agent,
+          });
+          printCronJson(res);
+        } catch (err) {
+          handleCronCliError(err);
+        }
+      }),
+  );
+
+  addGatewayClientOptions(
+    cron
       .command("run")
       .description("Run a cron job now (debug)")
       .argument("<id>", "Job id")
