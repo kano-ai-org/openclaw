@@ -3,6 +3,7 @@ import type { createDefaultDeps } from "../../cli/deps.js";
 import type { HealthSummary } from "../../commands/health.js";
 import type { CronService } from "../../cron/service.js";
 import type { PluginApprovalRequestPayload } from "../../infra/plugin-approvals.js";
+import { runHeartbeatOnce } from "../../infra/heartbeat-runner.js";
 import type { createSubsystemLogger } from "../../logging/subsystem.js";
 import type { WizardSession } from "../../wizard/session.js";
 import type { ChatAbortControllerEntry } from "../chat-abort.js";
@@ -102,6 +103,7 @@ export type GatewayRequestContext = {
     prompter: import("../../wizard/prompts.js").WizardPrompter,
   ) => Promise<void>;
   broadcastVoiceWakeChanged: (triggers: string[]) => void;
+  runHeartbeatOnce: typeof runHeartbeatOnce;
 };
 
 export type GatewayRequestOptions = {

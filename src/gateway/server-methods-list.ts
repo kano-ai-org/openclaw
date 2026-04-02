@@ -103,6 +103,7 @@ const BASE_METHODS = [
   "cron.remove",
   "cron.run",
   "cron.runs",
+  "cron.runHeartbeatOnce",
   "gateway.identity.get",
   "system-presence",
   "system-event",

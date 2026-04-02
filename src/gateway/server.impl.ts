@@ -1299,6 +1299,7 @@ export async function startGatewayServer(
       markChannelLoggedOut,
       wizardRunner,
       broadcastVoiceWakeChanged,
+      runHeartbeatOnce: cronState.runHeartbeatOnce,
     };
 
     // Register a lazy fallback for plugin subagent dispatch in non-WS paths

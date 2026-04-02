@@ -307,4 +307,13 @@ export const cronHandlers: GatewayRequestHandlers = {
     });
     respond(true, page, undefined);
   },
+  // Manual heartbeat trigger — wires to cron.ts via gateway RPC
+  "cron.runHeartbeatOnce": async ({ params, respond, context }) => {
+    const p = params as { agentId?: string; sessionKey?: string };
+    const result = await context.runHeartbeatOnce({
+      agentId: p.agentId,
+      sessionKey: p.sessionKey,
+    });
+    respond(true, result, undefined);
+  },
 };

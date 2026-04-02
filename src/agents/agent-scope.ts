@@ -262,7 +262,12 @@ export function resolveEffectiveModelFallbacks(params: {
     return agentFallbacksOverride;
   }
   const defaultFallbacks = resolveAgentModelFallbackValues(params.cfg.agents?.defaults?.model);
-  return agentFallbacksOverride ?? defaultFallbacks;
+  // Prefer agent's own fallbacks when present; only fall back to defaults if the
+  // agent has no fallbacks configured (e.g. model stored as a plain string).
+  if (agentFallbacksOverride !== undefined) {
+    return agentFallbacksOverride;
+  }
+  return defaultFallbacks;
 }
 
 export function resolveAgentWorkspaceDir(cfg: OpenClawConfig, agentId: string) {
